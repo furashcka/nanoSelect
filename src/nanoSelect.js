@@ -3,7 +3,7 @@
 		this.el = elemSelect;
 		this.config = {
 			rootClass: 'nanoSelect',
-			triggerClass: 'nanoSelect__trigger',
+			toggleClass: 'nanoSelect__toggle',
 			labelClass: 'nanoSelect__label',
 			arrowClass: 'nanoSelect__arrow',
 			resultClass: 'nanoSelect__result',
@@ -77,7 +77,7 @@
 					return;
 				
 				var bool 	= (
-						ev.target.className === _this.config.triggerClass ||
+						ev.target.className === _this.config.toggleClass ||
 						ev.target.className === _this.config.labelClass ||
 						ev.target.className === _this.config.arrowClass
 					);
@@ -98,13 +98,13 @@
 			this.select.className += ' ' + this.config.nativeClass;
 	};
 
-	nanoSelect.prototype.triggerResult = function(hardTrigger) {
-		if( typeof hardTrigger == 'undefined' )
-			this.select.triggerState = ( this.select.triggerState == 'open' ) ? 'close' : 'open';
+	nanoSelect.prototype.toggleResult = function(hardToggle) {
+		if( typeof hardToggle == 'undefined' )
+			this.select.toggleState = ( this.select.toggleState == 'open' ) ? 'close' : 'open';
 		else
-			this.select.triggerState = (hardTrigger === true) ? 'open' : 'close';
+			this.select.toggleState = (hardToggle === true) ? 'open' : 'close';
 
-		if(this.select.triggerState == 'open') {
+		if(this.select.toggleState == 'open') {
 			this.select.className += ' ' + this.config.openClass;
 
 			if( this.config.resultPosition == 'bottom' )
@@ -129,14 +129,14 @@
 		this.elOptions				= this.el.getElementsByTagName('option')
 
 		this.select 				= document.createElement('div');
-		this.trigger 				= document.createElement('label');
+		this.toggle 				= document.createElement('label');
 		this.label 					= document.createElement('div');
 		this.arrow 					= document.createElement('div');
 		this.result 				= document.createElement('div');
 		this.list 					= document.createElement('div');
 
 		this.select.className 		= this.config.rootClass;
-		this.trigger.className 		= this.config.triggerClass;
+		this.toggle.className 		= this.config.toggleClass;
 		this.label.className 		= this.config.labelClass;
 		this.arrow.className 		= this.config.arrowClass;
 		this.result.className 		= this.config.resultClass;
@@ -144,15 +144,15 @@
 
 		this.label.innerHTML 		= this.elOptions[this.el.selectedIndex].innerHTML;
 
-		this.trigger.appendChild(this.label);
-		this.trigger.appendChild(this.arrow);
-		this.trigger.appendChild(this.nativeSelect);
+		this.toggle.appendChild(this.label);
+		this.toggle.appendChild(this.arrow);
+		this.toggle.appendChild(this.nativeSelect);
 		this.result.appendChild(this.list);
-		this.select.appendChild(this.trigger);
+		this.select.appendChild(this.toggle);
 		this.select.appendChild(this.result);
 
 		this.select.handleIndex 	= handleArr.length;
-		this.trigger.handleIndex 	= handleArr.length;
+		this.toggle.handleIndex 	= handleArr.length;
 		this.label.handleIndex 		= handleArr.length;
 		this.arrow.handleIndex 		= handleArr.length;
 		this.result.handleIndex 	= handleArr.length;
@@ -171,8 +171,8 @@
 	var handleArr = [];
 	nanoSelect.prototype.pushHandle = function() {
 		var _this = this;
-		handleArr.push(function(ev, hardTrigger) {
-			_this.triggerResult(hardTrigger);
+		handleArr.push(function(ev, hardtoggle) {
+			_this.toggleResult(hardtoggle);
 		});
 	};
 
@@ -189,3 +189,7 @@
 		return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 	}
 }(this));
+
+
+//TODO added to option element the title atrribute with value from native option
+//TODO added searching
