@@ -40,7 +40,7 @@
 			customOption.className 	= this.config.optionClass;
 			customOption.innerHTML 	= '<span>'+this.elOptions[i].innerHTML+'</span>';
 			customOption.index 		= i;
-			this.onClickToOption(customOption);
+			this.onClickOption(customOption);
 
 			this.nativeSelect.appendChild(nativeOption);
 			this.list.appendChild(customOption);
@@ -60,7 +60,7 @@
 			};
 	};
 
-	nanoSelect.prototype.onClickToOption = function(el) {
+	nanoSelect.prototype.onClickOption = function(el) {
 		var _this = this;
 		el.onclick = function(ev) {
 			_this.label.innerHTML = this.children[0].innerHTML;
