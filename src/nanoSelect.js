@@ -27,7 +27,7 @@
 	nanoSelect.prototype.init = function() {
 		this.createNativeSelect();
 		this.createSelect();
-		this.onClickToDocument();
+		this.onClickDocument();
 		this.onChangeSelect();
 
 		for(var i = 0; i < this.elOptions.length; i++) {
@@ -68,7 +68,7 @@
 		}
 	};
 
-	nanoSelect.prototype.onClickToDocument = function() {
+	nanoSelect.prototype.onClickDocument = function() {
 		var _this = this;
 
 		if(handleArr.length == 1 && !_useNative())
