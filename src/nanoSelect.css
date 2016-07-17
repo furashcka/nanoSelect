@@ -20,6 +20,9 @@
 	-o-transform: rotate(180deg);
 	transform: rotate(180deg);
 }
+.nanoSelect_open > .nanoSelect__toggle > .nanoSelect__search {
+	display: block;
+}
 .nanoSelect_open > .nanoSelect__result {
 	display: block;
 	z-index: 99999;
@@ -70,6 +73,21 @@
 .nanoSelect_native > .nanoSelect__toggle > select {
 	width: 100%;
 	height: 100%;
+}
+.nanoSelect__search {
+	position: absolute;
+	display: none;
+	font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+	background: #fff;
+	font-size: 14px;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 1;
+	padding: 0 10px;
+	border-radius: 5px;
+	border: 0;
 }
 .nanoSelect__label {
 	white-space: nowrap;

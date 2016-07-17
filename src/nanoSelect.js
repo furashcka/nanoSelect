@@ -1,9 +1,13 @@
 (function(scope) {
 	scope.nanoSelect = function(elemSelect, userConfig) {
 		this.el = elemSelect;
+		this.searchArr = [];
 		this.config = {
+			search: false,
+			searchPlaceholder: 'Type for search...',
 			rootClass: 'nanoSelect',
 			toggleClass: 'nanoSelect__toggle',
+			searchClass: 'nanoSelect__search',
 			labelClass: 'nanoSelect__label',
 			arrowClass: 'nanoSelect__arrow',
 			resultClass: 'nanoSelect__result',
@@ -27,12 +31,15 @@
 	nanoSelect.prototype.init = function() {
 		this.createNativeSelect();
 		this.createSelect();
+		this.initSearch();
 		this.onClickDocument();
 		this.onChangeSelect();
 
 		for(var i = 0; i < this.elOptions.length; i++) {
 			var nativeOption 		= document.createElement('option');
 			var customOption 		= document.createElement('div');
+
+			this.searchArr.push(this.elOptions[i].innerHTML);
 
 			nativeOption.innerHTML 	= this.elOptions[i].innerHTML;
 			nativeOption.value 		= this.elOptions[i].value;
@@ -73,12 +80,15 @@
 
 		if(handleArr.length == 1 && !_useNative())
 			document.onmouseup = function(ev) {
-				if( ev.target.className === _this.list.className )
+				if( 
+					ev.target.className === _this.config.listClass ||
+					ev.target.className === _this.config.searchClass
+			 	)
 					return;
 				
 				var bool 	= (
-						ev.target.className === _this.config.toggleClass ||
-						ev.target.className === _this.config.labelClass ||
+						ev.target.className === _this.config.toggleClass 	||
+						ev.target.className === _this.config.labelClass 	||
 						ev.target.className === _this.config.arrowClass
 					);
 
@@ -99,24 +109,30 @@
 	};
 
 	nanoSelect.prototype.toggleResult = function(hardToggle) {
+		var _this = this;
+
 		if( typeof hardToggle == 'undefined' )
-			this.select.toggleState = ( this.select.toggleState == 'open' ) ? 'close' : 'open';
+			_this.select.toggleState = ( _this.select.toggleState == 'open' ) ? 'close' : 'open';
 		else
-			this.select.toggleState = (hardToggle === true) ? 'open' : 'close';
+			_this.select.toggleState = (hardToggle === true) ? 'open' : 'close';
 
-		if(this.select.toggleState == 'open') {
-			this.select.className += ' ' + this.config.openClass;
+		if(_this.select.toggleState == 'open') {
+			_this.select.className += ' ' + _this.config.openClass;
 
-			if( this.config.resultPosition == 'bottom' )
-				this.select.className += ' ' + this.config.positionBottomClass;
+			if( _this.config.resultPosition == 'bottom' )
+				_this.select.className += ' ' + _this.config.positionBottomClass;
 			else
-				this.select.className += ' ' + this.config.positionTopClass;
+				_this.select.className += ' ' + _this.config.positionTopClass;
 
-			this.config.opened();
+			if( _this.config.search ) {
+				setTimeout(function() { _this.inputSearch.focus(); }, 100);
+			}
+
+			_this.config.opened();
 		}
 		else {
-			this.select.className = this.config.rootClass;
-			this.config.closed();
+			_this.select.className = _this.config.rootClass;
+			_this.config.closed();
 		}
 	};
 
@@ -159,6 +175,44 @@
 		this.pushHandle();
 	};
 
+	var handleArr = [];
+	nanoSelect.prototype.pushHandle = function() {
+		var _this = this;
+		handleArr.push(function(ev, hardtoggle) {
+			_this.toggleResult(hardtoggle);
+		});
+	};
+
+	nanoSelect.prototype.initSearch = function() {
+		var _this = this;
+		if( !_this.config.search )
+			return;
+
+		_this.inputSearch = document.createElement('input');
+
+		_this.inputSearch.className = _this.config.searchClass;
+		_this.inputSearch.setAttribute('type', 'text');
+		_this.inputSearch.setAttribute('placeholder', _this.config.searchPlaceholder);
+
+		_this.toggle.appendChild(_this.inputSearch);
+
+		_this.inputSearch.onkeyup = function(ev) {
+			for( key in _this.searchArr ) {
+				var bool = _this.searchArr[key].toLowerCase().indexOf( this.value.toLowerCase() ) >= 0;
+				_this.list.childNodes[key].style.display = (bool == true) ? 'block' : 'none';
+			}
+		}
+		_this.inputSearch.onblur = function() {
+			var input = this;
+			setTimeout(function() {
+				input.value = '';
+				for( key in _this.searchArr ) {
+					_this.list.childNodes[key].style.display = 'block';
+				}
+			}, 100);
+		}
+	}
+
 	nanoSelect.prototype.extandAttr = function() {
 		this.el.removeAttribute('id');
 		this.el.removeAttribute('class');
@@ -166,14 +220,6 @@
 		
 		for(var i = 0; i < this.el.attributes.length; i++)
 			this.nativeSelect.setAttribute(this.el.attributes[i].name, this.el.attributes[i].value);
-	};
-
-	var handleArr = [];
-	nanoSelect.prototype.pushHandle = function() {
-		var _this = this;
-		handleArr.push(function(ev, hardtoggle) {
-			_this.toggleResult(hardtoggle);
-		});
 	};
 
 	function _extend(array1, array2) {

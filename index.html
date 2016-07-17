@@ -188,7 +188,9 @@
 
     <script src="src/nanoSelect.js"></script>
 	<script>
-		new nanoSelect(document.getElementById('select0'));
+		new nanoSelect(document.getElementById('select0'), {
+			search: true
+		});
 		new nanoSelect(document.getElementById('select1'));
 		new nanoSelect(document.getElementById('select2'));
 		new nanoSelect(document.getElementById('select3'));
