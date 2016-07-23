@@ -19,7 +19,8 @@
 			positionBottomClass: 'nanoSelect_bottom',
 			resultPosition: 'bottom',
 			opened: function() {},
-			closed: function() {}
+			closed: function() {},
+			changed: function() {}
 		};
 
 		if( typeof userConfig === 'object' )
@@ -61,10 +62,15 @@
 	nanoSelect.prototype.onChangeSelect = function() {
 		var _this = this;
 
-		if(_useNative())
-			this.nativeSelect.onchange = function() {
-				_this.label.innerHTML = this.children[this.selectedIndex].innerHTML;
-			};
+		_this.nativeSelect.onchange = function() {
+			var label = this.children[this.selectedIndex].innerHTML;
+			var value = this.children[this.selectedIndex].value;
+
+			if(_useNative())
+				_this.label.innerHTML = label;
+
+			_this.config.changed(label, value);
+		};
 	};
 
 	nanoSelect.prototype.onClickOption = function(el) {
@@ -72,6 +78,7 @@
 		el.onclick = function(ev) {
 			_this.label.innerHTML = this.children[0].innerHTML;
 			_this.nativeSelect.selectedIndex = this.index;
+			_this.nativeSelect.onchange();
 		}
 	};
 
