@@ -74,6 +74,14 @@
 		}
 	};
 
+	scope.nanoSelect.get = function(elemSelect) {
+		var selectedIndex = elemSelect.nativeSelect.selectedIndex;
+		return {
+			'label': elemSelect.nativeSelect[selectedIndex].innerHTML,
+			'value': elemSelect.nativeSelect[selectedIndex].value,
+		}
+	}
+
 	nanoSelect.prototype.init = function() {
 		this.createNativeSelect();
 		this.createSelect();
@@ -287,7 +295,3 @@
 		return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 	}
 }(this));
-
-
-//TODO added to option element the title atrribute with value from native option
-//TODO added searching
