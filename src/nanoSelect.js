@@ -29,6 +29,51 @@
 		this.init();
 	};
 
+	scope.nanoSelect.set = function(elemSelect, value) {
+		var selectedIndex = null;
+
+		if( typeof elemSelect.nativeSelect  != 'object' ||
+			typeof elemSelect.select 		!= 'object'  ) {
+			console.error('Not selected object of nanoSelect!');
+			return false;
+		}
+
+		switch( typeof value ) {
+			case 'number':
+				selectedIndex = value;
+				break;
+			case 'string':
+				for(var i = 0; i < elemSelect.el.length; i++) {
+					if(elemSelect.el[i].innerHTML === value) {
+						selectedIndex = i;
+						break;
+					}
+				}
+				break;
+			case 'object':
+				for(var i = 0; i < elemSelect.el.length; i++) {
+					if(
+						i === value.selectedIndex &&
+						elemSelect.el[i].innerHTML === value.label
+					) 
+					{
+						selectedIndex = i;
+						break;
+					}
+				}
+				break;
+			default:
+				console.error('Invalid value!');
+				return false;
+				break;
+		}
+
+		if( selectedIndex !== null ) {
+			elemSelect.label.innerHTML = elemSelect.nativeSelect[selectedIndex].innerHTML;
+			elemSelect.nativeSelect.selectedIndex = selectedIndex;
+		}
+	};
+
 	nanoSelect.prototype.init = function() {
 		this.createNativeSelect();
 		this.createSelect();
@@ -216,7 +261,7 @@
 				for( key in _this.searchArr ) {
 					_this.list.childNodes[key].style.display = 'block';
 				}
-			}, 100);
+			}, 300);
 		}
 	}
 

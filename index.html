@@ -188,7 +188,7 @@
 
     <script src="src/nanoSelect.js"></script>
 	<script>
-		new nanoSelect(document.getElementById('select0'), {
+		var customSelect = new nanoSelect(document.getElementById('select0'), {
 			search: true,
 			changed: function(label, value) {
 				alert('You selected    "' + label + '"   item with    "' + value + '"    value...');
@@ -200,6 +200,13 @@
 		new nanoSelect(document.getElementById('select4'), {
 			resultPosition: 'top'
 		});
+
+		setTimeout(function() {
+			nanoSelect.set(customSelect, {
+				selectedIndex: 29,
+				label: 'Value #30'
+			});
+		}, 1000);
 	</script>
 </body>
 </html>
