@@ -66,6 +66,8 @@
 		if( selectedIndex !== null ) {
 			_this.label.innerHTML = _this.nativeSelect[selectedIndex].innerHTML;
 			_this.nativeSelect.selectedIndex = selectedIndex;
+
+			_this.config.changed(_this.nativeSelect[selectedIndex].innerHTML, _this.nativeSelect[selectedIndex].value);
 		}
 	}
 
