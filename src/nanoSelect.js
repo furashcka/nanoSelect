@@ -74,13 +74,15 @@
 		}
 	};
 
-	scope.nanoSelect.get = function(elemSelect) {
-		var selectedIndex = elemSelect.nativeSelect.selectedIndex;
+	nanoSelect.prototype.get = function() {
+		var _this 			= this;
+		var selectedIndex 	= _this.nativeSelect.selectedIndex;
+		
 		return {
-			'label': elemSelect.nativeSelect[selectedIndex].innerHTML,
-			'value': elemSelect.nativeSelect[selectedIndex].value,
-		}
-	}
+			'label': _this.nativeSelect[selectedIndex].innerHTML,
+			'value': _this.nativeSelect[selectedIndex].value,
+		};
+	};
 
 	nanoSelect.prototype.init = function() {
 		this.createNativeSelect();
