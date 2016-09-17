@@ -1,6 +1,6 @@
 (function(scope) {
-	scope.nanoSelect = function(elemSelect, userConfig) {
-		this.el = elemSelect;
+	scope.nanoSelect = function(_this, userConfig) {
+		this.el = _this;
 		this.searchArr = [];
 		this.config = {
 			search: false,
@@ -29,32 +29,27 @@
 		this.init();
 	};
 
-	scope.nanoSelect.set = function(elemSelect, value) {
-		var selectedIndex = null;
-
-		if( typeof elemSelect.nativeSelect  != 'object' ||
-			typeof elemSelect.select 		!= 'object'  ) {
-			console.error('Not selected object of nanoSelect!');
-			return false;
-		}
+	nanoSelect.prototype.set = function(value) {
+		var _this 			= this;
+		var selectedIndex 	= null;
 
 		switch( typeof value ) {
 			case 'number':
 				selectedIndex = value;
 				break;
 			case 'string':
-				for(var i = 0; i < elemSelect.el.length; i++) {
-					if(elemSelect.el[i].innerHTML === value) {
+				for(var i = 0; i < _this.el.length; i++) {
+					if(_this.el[i].innerHTML === value) {
 						selectedIndex = i;
 						break;
 					}
 				}
 				break;
 			case 'object':
-				for(var i = 0; i < elemSelect.el.length; i++) {
+				for(var i = 0; i < _this.el.length; i++) {
 					if(
-						i === value.selectedIndex &&
-						elemSelect.el[i].innerHTML === value.label
+						_this.el[i].value 		=== value.value &&
+						_this.el[i].innerHTML 	=== value.label
 					) 
 					{
 						selectedIndex = i;
@@ -69,10 +64,10 @@
 		}
 
 		if( selectedIndex !== null ) {
-			elemSelect.label.innerHTML = elemSelect.nativeSelect[selectedIndex].innerHTML;
-			elemSelect.nativeSelect.selectedIndex = selectedIndex;
+			_this.label.innerHTML = _this.nativeSelect[selectedIndex].innerHTML;
+			_this.nativeSelect.selectedIndex = selectedIndex;
 		}
-	};
+	}
 
 	nanoSelect.prototype.get = function() {
 		var _this 			= this;
