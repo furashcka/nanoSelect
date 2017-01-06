@@ -1,296 +1,318 @@
-(function(scope) {
-	scope.nanoSelect = function(_this, userConfig) {
-		this.el = _this;
-		this.searchArr = [];
-		this.config = {
-			search: false,
-			searchPlaceholder: 'Type for search...',
-			rootClass: 'nanoSelect',
-			toggleClass: 'nanoSelect__toggle',
-			searchClass: 'nanoSelect__search',
-			labelClass: 'nanoSelect__label',
-			arrowClass: 'nanoSelect__arrow',
-			resultClass: 'nanoSelect__result',
-			listClass: 'nanoSelect__list',
-			optionClass: 'nanoSelect__option',
-			openClass: 'nanoSelect_open',
-			nativeClass: 'nanoSelect_native',
-			positionTopClass: 'nanoSelect_top',
-			positionBottomClass: 'nanoSelect_bottom',
-			resultPosition: 'bottom',
-			opened: function() {},
-			closed: function() {},
-			changed: function() {}
-		};
+;(function(scope) {
+    'use strict';
 
-		if( typeof userConfig === 'object' )
-			_extend(this.config, userConfig);
+    var arrSelect = { length:0 };
+    var nanoSelect = function(el, opts) {
+        if(el.getAttribute('data-created')) {
+            console.error('nanoSelect already created!');
+            return false;
+        }
 
-		this.init();
-	};
+        this.el = el;
+        this.name = null;
+        this.length = 0;
+        this.options = {
+            rootClass: 'nanoSelect',
+            toggleClass: 'nanoSelect__toggle',
+            searchClass: 'nanoSelect__search',
+            labelClass: 'nanoSelect__label',
+            arrowClass: 'nanoSelect__arrow',
+            resultClass: 'nanoSelect__result',
+            listClass: 'nanoSelect__list',
+            optionClass: 'nanoSelect__option',
+            openClass: 'nanoSelect_open',
+            nativeClass: 'nanoSelect_native',
+            positionTopClass: 'nanoSelect_top',
+            positionBottomClass: 'nanoSelect_bottom',
+            useNative: true,
+            search: false,
+            searchPlaceholder: 'Type for search...',
+            resultPosition: 'bottom',
+            opened: function() {},
+            closed: function() {},
+            changed: function() {}
+        };
 
-	nanoSelect.prototype.set = function(value) {
-		var _this 			= this;
-		var selectedIndex 	= null;
+        if(typeof opts === 'object')
+            _extend(this.options, opts);
 
-		switch( typeof value ) {
-			case 'number':
-				selectedIndex = value;
-				break;
-			case 'string':
-				for(var i = 0; i < _this.el.length; i++) {
-					if(_this.el[i].innerHTML === value) {
-						selectedIndex = i;
-						break;
-					}
-				}
-				break;
-			case 'object':
-				for(var i = 0; i < _this.el.length; i++) {
-					if(
-						_this.el[i].value 		=== value.value &&
-						_this.el[i].innerHTML 	=== value.label
-					) 
-					{
-						selectedIndex = i;
-						break;
-					}
-				}
-				break;
-			default:
-				console.error('Invalid value!');
-				return false;
-				break;
-		}
+        this.init();
+    };
 
-		if( selectedIndex !== null ) {
-			_this.label.innerHTML = _this.nativeSelect[selectedIndex].innerHTML;
-			_this.nativeSelect.selectedIndex = selectedIndex;
+    nanoSelect.prototype.init = function() {
+        this.createNativeSelect();
+        this.createSelect();
+        this.initSearch();
+        this.onClickWindow();
+        this.onChangeSelect();
 
-			_this.config.changed(_this.nativeSelect[selectedIndex].innerHTML, _this.nativeSelect[selectedIndex].value);
-		}
-	}
+        this.length = this.elOptions.length;
 
-	nanoSelect.prototype.get = function() {
-		var _this 			= this;
-		var selectedIndex 	= _this.nativeSelect.selectedIndex;
-		
-		return {
-			'label': _this.nativeSelect[selectedIndex].innerHTML,
-			'value': _this.nativeSelect[selectedIndex].value,
-		};
-	};
+        for(var i=0; i < this.length; i++) {
+            var nativeOption        = document.createElement('option');
+            var customOption        = document.createElement('div');
 
-	nanoSelect.prototype.init = function() {
-		this.createNativeSelect();
-		this.createSelect();
-		this.initSearch();
-		this.onClickDocument();
-		this.onChangeSelect();
+            nativeOption.innerHTML  = this.elOptions[i].innerHTML;
+            nativeOption.value      = this.elOptions[i].value;
 
-		for(var i = 0; i < this.elOptions.length; i++) {
-			var nativeOption 		= document.createElement('option');
-			var customOption 		= document.createElement('div');
+            customOption.className  = this.options.optionClass;
+            customOption.innerHTML  = '<span>'+this.elOptions[i].innerHTML+'</span>';
+            customOption.index      = i;
+            this.onClickCustomOption(customOption);
 
-			this.searchArr.push(this.elOptions[i].innerHTML);
+            this.nativeSelect.appendChild(nativeOption);
+            this.list.appendChild(customOption);
+        }
 
-			nativeOption.innerHTML 	= this.elOptions[i].innerHTML;
-			nativeOption.value 		= this.elOptions[i].value;
+        this.el.setAttribute('style', 'display: none !important;');
+        this.nativeSelect.selectedIndex = this.el.selectedIndex;
+        this.el.parentNode.insertBefore(this.select, this.el);
 
-			customOption.className 	= this.config.optionClass;
-			customOption.innerHTML 	= '<span>'+this.elOptions[i].innerHTML+'</span>';
-			customOption.index 		= i;
-			this.onClickOption(customOption);
+        this.el.setAttribute('data-created', 'true');
 
-			this.nativeSelect.appendChild(nativeOption);
-			this.list.appendChild(customOption);
-		}
+        this.id = 'id' + arrSelect.length++;
+        arrSelect[this.id] = this;
+        arrSelect[this.id].toggleResult = this.toggleResult;
+    };
 
-		this.nativeSelect.selectedIndex = this.el.selectedIndex;
-		this.el.parentNode.insertBefore(this.select, this.el);
-		this.el.parentNode.removeChild(this.el);
-	};
+    nanoSelect.prototype.createNativeSelect = function() {
+        this.nativeSelect = document.createElement('select');
+        this.extendAttrForNativeSelect();
+    };
 
-	nanoSelect.prototype.onChangeSelect = function() {
-		var _this = this;
+    nanoSelect.prototype.createSelect = function() {
+        this.elOptions              = this.el.getElementsByTagName('option');
 
-		_this.nativeSelect.onchange = function() {
-			var label = this.children[this.selectedIndex].innerHTML;
-			var value = this.children[this.selectedIndex].value;
+        this.select                 = document.createElement('div');
+        this.toggle                 = document.createElement('label');
+        this.label                  = document.createElement('div');
+        this.arrow                  = document.createElement('div');
+        this.result                 = document.createElement('div');
+        this.list                   = document.createElement('div');
 
-			if(_useNative())
-				_this.label.innerHTML = label;
+        this.select.className       = this.options.rootClass;
+        this.toggle.className       = this.options.toggleClass;
+        this.label.className        = this.options.labelClass;
+        this.arrow.className        = this.options.arrowClass;
+        this.result.className       = this.options.resultClass;
+        this.list.className         = this.options.listClass;
 
-			_this.config.changed(label, value);
-		};
-	};
+        this.label.innerHTML        = this.elOptions[this.el.selectedIndex].innerHTML;
 
-	nanoSelect.prototype.onClickOption = function(el) {
-		var _this = this;
-		el.onclick = function(ev) {
-			_this.label.innerHTML = this.children[0].innerHTML;
-			_this.nativeSelect.selectedIndex = this.index;
-			_this.nativeSelect.onchange();
-		}
-	};
+        this.toggle.appendChild(this.label);
+        this.toggle.appendChild(this.arrow);
+        this.toggle.appendChild(this.nativeSelect);
+        this.result.appendChild(this.list);
+        this.select.appendChild(this.toggle);
+        this.select.appendChild(this.result);
+    };
 
-	nanoSelect.prototype.onClickDocument = function() {
-		var _this = this;
+    nanoSelect.prototype.extendAttrForNativeSelect = function() {
+        for(var i = 0, len = this.el.attributes.length; i < len; i++) {
+            if(
+                this.el.attributes[i].name === 'id' ||
+                this.el.attributes[i].name === 'class' ||
+                this.el.attributes[i].name === 'multiple'
+            ) continue;
 
-		if(handleArr.length == 1 && !_useNative())
-			document.onmouseup = function(ev) {
-				if( 
-					ev.target.className === _this.config.listClass ||
-					ev.target.className === _this.config.searchClass
-			 	)
-					return;
-				
-				var bool 	= (
-						ev.target.className === _this.config.toggleClass 	||
-						ev.target.className === _this.config.labelClass 	||
-						ev.target.className === _this.config.arrowClass
-					);
+            this.nativeSelect.setAttribute(this.el.attributes[i].name, this.el.attributes[i].value);
+        }
 
-				for(var i = 0; i < handleArr.length; i++) {
-					if(i == ev.target.handleIndex)
-						continue;
+        this.name = this.el.getAttribute('name');
+        this.el.removeAttribute('name');
+    };
 
-					handleArr[i](ev, false);
-				}
+    nanoSelect.prototype.toggleResult = function(hardToggle) {
+        this.select.isOpened = !this.select.isOpened;
 
-				if(!bool)
-					return;
+        if(hardToggle)
+            this.select.isOpened = hardToggle === 'open';
 
-				handleArr[ev.target.handleIndex](ev);
-			};
-		else if(_useNative())
-			this.select.className += ' ' + this.config.nativeClass;
-	};
+        if(this.options.search && !hardToggle)
+            this.select.isOpened = true;
 
-	nanoSelect.prototype.toggleResult = function(hardToggle) {
-		var _this = this;
+        if(this.select.isOpened) {
+            this.select.className += ' ' + this.options.openClass;
+            this.select.className += (this.options.resultPosition === 'bottom') ? ' ' + this.options.positionBottomClass : ' ' + this.options.positionTopClass;
+            this.options.opened.call(this.select);
 
-		if( typeof hardToggle == 'undefined' )
-			_this.select.toggleState = ( _this.select.toggleState == 'open' ) ? 'close' : 'open';
-		else
-			_this.select.toggleState = (hardToggle === true) ? 'open' : 'close';
+            if(this.options.search)
+                this.inputSearch.focus();
+        }
+        else {
+            this.select.className = this.options.rootClass;
+            this.options.closed.call(this.select);
+        }
+    };
 
-		if(_this.select.toggleState == 'open') {
-			_this.select.className += ' ' + _this.config.openClass;
+    nanoSelect.prototype.onClickCustomOption = function(customOption) {
+        var _this = this;
+        customOption.onclick = function(e) {
+            e.preventDefault();
+            e.stopPropagation();
 
-			if( _this.config.resultPosition == 'bottom' )
-				_this.select.className += ' ' + _this.config.positionBottomClass;
-			else
-				_this.select.className += ' ' + _this.config.positionTopClass;
+            _this.label.innerHTML = this.children[0].innerHTML;
+            _this.nativeSelect.selectedIndex = this.index;
 
-			if( _this.config.search ) {
-				setTimeout(function() { _this.inputSearch.focus(); }, 100);
-			}
+            _this.toggleResult('close');
+            _this.nativeSelect.onchange();
+        }
+    };
 
-			_this.config.opened();
-		}
-		else {
-			_this.select.className = _this.config.rootClass;
-			_this.config.closed();
-		}
-	};
+    nanoSelect.prototype.onClickWindow = function() {
+        var _this = this;
 
-	nanoSelect.prototype.createNativeSelect = function() {
-		this.nativeSelect = document.createElement('select');
-		this.extandAttr();
-	};
+        if(!_useNative() || !this.options.useNative) {
+            scope.addEventListener('click', function() {
+                _this.toggleResult('close');
+            });
+            this.select.addEventListener('click', function(e) {
+                for(var key in arrSelect) {
+                    if(arrSelect[key].id === _this.id || key === 'length') continue;
+                    arrSelect[key].toggleResult('close');
+                }
 
-	nanoSelect.prototype.createSelect = function() {
-		this.elOptions				= this.el.getElementsByTagName('option')
+                e.preventDefault();
+                e.stopPropagation();
+                _this.toggleResult();
+            });
+        }
+        else
+            this.select.className += ' ' + this.options.nativeClass;
+    };
 
-		this.select 				= document.createElement('div');
-		this.toggle 				= document.createElement('label');
-		this.label 					= document.createElement('div');
-		this.arrow 					= document.createElement('div');
-		this.result 				= document.createElement('div');
-		this.list 					= document.createElement('div');
+    nanoSelect.prototype.onChangeSelect = function() {
+        var _this = this;
 
-		this.select.className 		= this.config.rootClass;
-		this.toggle.className 		= this.config.toggleClass;
-		this.label.className 		= this.config.labelClass;
-		this.arrow.className 		= this.config.arrowClass;
-		this.result.className 		= this.config.resultClass;
-		this.list.className			= this.config.listClass;
+        _this.nativeSelect.onchange = function() {
+            var value = this[this.selectedIndex].value;
+            var label = this[this.selectedIndex].innerHTML;
 
-		this.label.innerHTML 		= this.elOptions[this.el.selectedIndex].innerHTML;
+            if(_useNative())
+                _this.label.innerHTML = label;
 
-		this.toggle.appendChild(this.label);
-		this.toggle.appendChild(this.arrow);
-		this.toggle.appendChild(this.nativeSelect);
-		this.result.appendChild(this.list);
-		this.select.appendChild(this.toggle);
-		this.select.appendChild(this.result);
+            _this.options.changed.call(_this.select, value, label);
+        };
+    };
 
-		this.select.handleIndex 	= handleArr.length;
-		this.toggle.handleIndex 	= handleArr.length;
-		this.label.handleIndex 		= handleArr.length;
-		this.arrow.handleIndex 		= handleArr.length;
-		this.result.handleIndex 	= handleArr.length;
-		this.pushHandle();
-	};
+    nanoSelect.prototype.initSearch = function() {
+        var _this = this;
+        if(!this.options.search)
+            return false;
 
-	var handleArr = [];
-	nanoSelect.prototype.pushHandle = function() {
-		var _this = this;
-		handleArr.push(function(ev, hardtoggle) {
-			_this.toggleResult(hardtoggle);
-		});
-	};
+        this.inputSearch = document.createElement('input');
 
-	nanoSelect.prototype.initSearch = function() {
-		var _this = this;
-		if( !_this.config.search )
-			return;
+        this.inputSearch.className = this.options.searchClass;
+        this.inputSearch.setAttribute('type', 'text');
+        this.inputSearch.setAttribute('placeholder', this.options.searchPlaceholder);
 
-		_this.inputSearch = document.createElement('input');
+        this.toggle.appendChild(this.inputSearch);
 
-		_this.inputSearch.className = _this.config.searchClass;
-		_this.inputSearch.setAttribute('type', 'text');
-		_this.inputSearch.setAttribute('placeholder', _this.config.searchPlaceholder);
+        this.inputSearch.onkeyup = function() {
+            for(var i=0, j=0; i < _this.length; i++) {
+                var value = _this.elOptions[i].innerHTML;
+                var bool = value.toLowerCase().indexOf( this.value.toLowerCase() ) >= 0;
+                _this.list.childNodes[i].style.display = !bool ? 'none' : 'block';
 
-		_this.toggle.appendChild(_this.inputSearch);
+                if(bool) j++;
+            }
 
-		_this.inputSearch.onkeyup = function(ev) {
-			for( key in _this.searchArr ) {
-				var bool = _this.searchArr[key].toLowerCase().indexOf( this.value.toLowerCase() ) >= 0;
-				_this.list.childNodes[key].style.display = (bool == true) ? 'block' : 'none';
-			}
-		}
-		_this.inputSearch.onblur = function() {
-			var input = this;
-			setTimeout(function() {
-				input.value = '';
-				for( key in _this.searchArr ) {
-					_this.list.childNodes[key].style.display = 'block';
-				}
-			}, 300);
-		}
-	}
+            _this.list.style.height = (j < 1) ? 0 : 'auto'; //fix bug for ie9
+        };
+        this.inputSearch.onblur = function() {
+            var input = this;
+            setTimeout(function() {
+                if(_this.select.isOpened) {
+                    input.focus();
+                    return false;
+                }
 
-	nanoSelect.prototype.extandAttr = function() {
-		this.el.removeAttribute('id');
-		this.el.removeAttribute('class');
-		this.el.removeAttribute('multiple');
-		
-		for(var i = 0; i < this.el.attributes.length; i++)
-			this.nativeSelect.setAttribute(this.el.attributes[i].name, this.el.attributes[i].value);
-	};
+                input.value = '';
+                for(var i=0; i < _this.length; i++)
+                    _this.list.childNodes[i].style.display = 'block';
 
-	function _extend(array1, array2) {
-		for( key in array1) {
-			if( typeof array2[key] != 'undefined' )
-				array1[key] = array2[key];
-		}
+                _this.list.style.height = 'auto'; //fix bug for ie9
+            }, 300);
+        };
+    };
 
-		return array1;
-	};
+    nanoSelect.prototype.setResult = function(value) {
+        var selectedIndex   = null;
 
-	function _useNative() {
-		return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-	}
-}(this));
+        switch(typeof value) {
+            case 'number':
+                selectedIndex = value;
+                break;
+            case 'string':
+                for(var i=0; i < this.length; i++)
+                    if(this.el[i].innerHTML === value) {
+                        selectedIndex = i;
+                        break;
+                    }
+                break;
+            case 'object':
+                for(var i=0; i < this.length; i++)
+                    if(
+                        this.el[i].value        === value.value &&
+                        this.el[i].innerHTML    === value.label
+                    ) {
+                        selectedIndex = i;
+                        break;
+                    }
+                break;
+            default:
+                console.error('Invalid value!');
+                return false;
+                break;
+        }
+
+        if(typeof selectedIndex === 'number') {
+            this.label.innerHTML = this.nativeSelect[selectedIndex].innerHTML;
+            this.nativeSelect.selectedIndex = selectedIndex;
+
+            this.options.changed.call(this.select, this.nativeSelect[selectedIndex].value, this.nativeSelect[selectedIndex].innerHTML);
+            return true;
+        }
+
+        return false;
+    };
+
+    nanoSelect.prototype.getResult = function() {
+        var selectedIndex   = this.nativeSelect.selectedIndex;
+
+        return {
+            'value': this.nativeSelect[selectedIndex].value,
+            'label': this.nativeSelect[selectedIndex].innerHTML
+        };
+    };
+
+    nanoSelect.prototype.destroy = function() {
+        this.select.parentNode.removeChild(this.select);
+        this.el.style.display = '';
+        this.el.nanoSelectCreated = false;
+        this.el.removeAttribute('data-created');
+        this.el.setAttribute('name', this.name);
+        delete arrSelect[this.id];
+    };
+
+
+
+    function _extend(arr1, arr2) {
+        for(var key in arr1)
+            arr1[key] = (key in arr2) ? arr2[key] : arr1[key];
+    }
+
+    function _useNative() {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    }
+
+    scope.nanoSelect = function(el, opts) {
+        var select = new nanoSelect(el, opts);
+
+        return {
+            setResult: function(v) { return select.setResult(v) },
+            getResult: function() { return select.getResult() },
+            destroy: function() { select.destroy() }
+        };
+    };
+})(window);

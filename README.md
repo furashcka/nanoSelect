@@ -1,4 +1,4 @@
-nanoSelect 0.0.1v
+nanoSelect 0.0.2v
 =======
 
 * nanoSelect it's very simple js library for customisation select elements

@@ -186,22 +186,21 @@
 		<button style="width: 200px;height: 35px;">Send</button>
 	</form>
 
-    <script src="src/nanoSelect.js"></script>
+	<script src="src/nanoSelect.js"></script>
 	<script>
 		var customSelect = new nanoSelect(document.getElementById('select0'), {
 			search: true,
-			changed: function(label, value) {
-				alert('You selected    "' + label + '"   item with    "' + value + '"    value...');
+			changed: function(value, label) {
+				alert('value="'+value+'" innerHTML="'+label+'"');
 			}
 		});
 		new nanoSelect(document.getElementById('select1'));
 		new nanoSelect(document.getElementById('select2'));
 		new nanoSelect(document.getElementById('select3'));
 		new nanoSelect(document.getElementById('select4'), {
-			resultPosition: 'top'
+			resultPosition: 'top',
+			useNative: false
 		});
-
-		customSelect.set(0);
 	</script>
 </body>
 </html>
