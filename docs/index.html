@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui">
+    <meta charset="UTF-8">
+    <title>nanoSelect it's very simple js library for customisation select elements</title>
+
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/themes/prism-okaidia.min.css">
+    <link rel="stylesheet" href="../src/nanoSelect.css">
+    <link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<a href="https://github.com/furashcka/nanoSelect"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
+
+    <main class="warp">
+        <h2 id="h">nanoSelect examples</h2>
+
+        <form method="get">
+            <strong>Countries:</strong>
+            <select name="countries" id="select-countries"></select>
+            
+            <strong>Books:</strong>
+            <select name="books" id="select-books">
+                <optgroup label="Top 5">
+                    <option value="1">To Kill a Mockingbird</option>
+                    <option value="2">1984 by George Orwell</option>
+                    <option value="3">Harry Potter and the Philosopher’s Stone by J.K. Rowling</option>
+                    <option value="4">The Lord of the Rings by J.R.R. Tolkien</option>
+                    <option value="5">The Great Gatsby by F. Scott Fitzgerald</option>
+                </optgroup>
+                <option value="6">Pride and Prejudice by Jane Austen</option>
+                <option value="7">The Diary Of A Young Girl by Anne Frank</option>
+                <option value="8">The Book Thief by Markus Zusak</option>
+                <option value="9">The Hobbit by J.R.R. Tolkien</option>
+                <option value="10">Little Women by Louisa May Alcott</option>
+                <option value="11">Fahrenheit 451 by Ray Bradbury</option>
+                <option value="12">Jane Eyre by Charlotte Bronte</option>
+                <option value="13">Animal Farm by George Orwell</option>
+                <option value="14">Gone with the Wind by Margaret Mitchell</option>
+                <option value="15">The Catcher in the Rye by J.D. Salinger</option>
+                <option value="16">Charlotte’s Web by E.B. White</option>
+                <option value="17">The Lion, the Witch, and the Wardrobe by C.S. Lewis</option>
+                <option value="18">The Grapes of Wrath by John Steinbeck</option>
+                <option value="19">Lord of the Flies by William Golding</option>
+                <option value="20">The Kite Runner by Khaled Hosseini</option>
+                <option value="21">Of Mice and Men by John Steinbeck</option>
+                <option value="22">A Tale of Two Cities by Charles Dickens</option>
+                <option value="23">Romeo and Juliet by William Shakespeare</option>
+                <option value="24">The Hitchhikers Guide to the Galaxy by Douglas Adams</option>
+                <option value="25">Wuthering Heights Emily Bronte</option>
+                <option value="26">The Color Purple by Alice Walker</option>
+                <option value="27">Alice in Wonderland by Lewis Carroll</option>
+                <option value="28">Frankenstein by Mary Shelley</option>
+                <option value="29">The Adventures of Huckleberry Finn by Mark Twain</option>
+                <option value="30">Slaughterhouse-Five by Kurt Vonnegut</option>
+            </select>
+            
+            <strong>Programm languages:</strong>
+            <select name="programm-languages" id="select-programm-languages">
+                <optgroup label="Top 3">
+                    <option value="1">JavaScript</option>
+                    <option value="2">Java</option>
+                    <option value="3">Python</option>
+                </optgroup>
+                <option value="4">Ruby</option>
+                <option value="5" selected="selected">PHP</option>
+                <option value="6">C++</option>
+                <option value="7">C#</option>
+                <option value="8">Go</option>
+                <option value="9">Scala</option>
+                <option value="10">Swift</option>
+            </select>
+
+            <strong>Colors:</strong>
+            <select name="colors" id="select-colors">
+                <option value="#E5E5E5">#E5E5E5</option>
+            </select>
+
+            <strong>Smartphones (custom scrollbar):</strong>
+            <select name="smartfons" id="select-smartfons">
+                <option value="1">iPhone 7 Plus</option>
+                <option value="2">iPhone 7</option>
+                <option value="3" selected>Samsung Galaxy S7 Edge</option>
+                <option value="4">Samsung Galaxy S7</option>
+                <option value="5">iPhone 6S Plus</option>
+                <option value="6">iPhone 6S</option>
+                <option value="7">iPhone SE</option>
+                <option value="8">Nexus 6P</option>
+                <option value="9">Nexus 5X</option>
+                <option value="10">OnePlus 3</option>
+                <option value="11">Moto Z</option>
+                <option value="12">HTC 10</option>
+                <option value="13">LG G5</option>
+                <option value="14">ZTE Axon 7</option>
+                <option value="15">Samsung Galaxy Note 5</option>
+                <option value="16">Moto G4</option>
+                <option value="17">BlackBerry Priv</option>
+                <option value="18">Microsoft Lumia 950</option>
+                <option value="19">BlackBerry Classic</option>
+                <option value="20">BlackBerry Passport</option>
+            </select>
+
+            <button class="submit-from">Submit</button>
+        </form>
+
+        <h2 id="h">How use</h2>
+<pre><code class="language-javascript">
+var select = new NanoSelect(element); //default
+var select = new NanoSelect(element, options); //with options
+</code></pre>
+
+<h2 id="h">Options</h2>
+<pre><code class="language-javascript">
+var options = {
+    rootClass: 'nanoSelect',
+    toggleClass: 'nanoSelect__toggle',
+    searchClass: 'nanoSelect__search',
+    labelClass: 'nanoSelect__label',
+    arrowClass: 'nanoSelect__arrow',
+    resultClass: 'nanoSelect__result',
+    listClass: 'nanoSelect__list',
+    groupClass: 'nanoSelect__group',
+    optionClass: 'nanoSelect__option',
+    limitClass: 'nanoSelect__limit', //for hidding long text in option (hidding in css)
+
+    openClass: 'nanoSelect_open',
+    nativeClass: 'nanoSelect_native',
+    positionTopClass: 'nanoSelect_top',
+    positionBottomClass: 'nanoSelect_bottom',
+
+    searchPlaceholder: 'Type for search...',
+    resultPosition: 'bottom', //top or bottom
+
+    useNative: true, //set - "false" if you want always show only custom select
+    search: false
+};
+</code></pre>
+
+<h2 id="h">Api Methods</h2>
+
+<pre><code class="language-javascript">
+var options = {
+    opened: function() {}, //called when custom select opened
+    closed: function() {}, //called when custom select closed
+    changed: function() {}, //called when select changed
+    template: function(item) { //template option
+        return item.text;
+    }
+};
+
+select.open(); //open custom select
+select.close(); //close custom select
+
+select.set(index, callChange);
+/* selecting option from code.
+   index (Number)
+   callChange (Boolean) - if set false: can't called changed() callback */
+
+select.add(data, pos, callback);
+/* add options.
+   data (Array) - [
+       {
+           value: value,
+           text: text,
+           selected: (Boolean)
+       },
+       {
+           text: groupText,
+           children: [
+               {
+                   value: value,
+                   text: text
+               }
+           ]
+       }
+   ];
+   pos (String) - after or before, default: after
+*/
+
+select.remove(indexes); //remove options, '*' - remove all; [0,1,2] - remove by index
+select.destroy(); //destroy custom select
+</code></pre>
+<h2 id="h">Html structure</h2>
+<pre><code class="language-markup">
+&lt;div class=&quot;nanoSelect&quot;&gt; 
+    &lt;div class=&quot;nanoSelect__toggle&quot;&gt; 
+        &lt;div class=&quot;nanoSelect__label&quot;&gt;iPhone 7 Plus&lt;/div&gt; 
+        &lt;div class=&quot;nanoSelect__arrow&quot;&gt;&lt;/div&gt; 
+        &lt;select name=&quot;smartfons&quot;&gt; 
+            &lt;option value=&quot;1&quot;&gt;iPhone 7 Plus&lt;/option&gt; 
+        &lt;/select&gt; 
+    &lt;/div&gt;
+    &lt;div class=&quot;nanoSelect__result&quot;&gt;
+        &lt;div class=&quot;nanoSelect__list&quot;&gt; 
+            &lt;div class=&quot;nanoSelect__option&quot;&gt; 
+                &lt;div class=&quot;nanoSelect__limit&quot;&gt;iPhone 7 Plus&lt;/div&gt; 
+            &lt;/div&gt; 
+        &lt;/div&gt; 
+    &lt;/div&gt; 
+&lt;/div&gt;
+</code></pre>
+    </main>
+    
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/prism.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/components/prism-javascript.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/components/prism-markup.min.js"></script>
+    <script src="../src/nanoSelect.js"></script>
+    <script src="baron.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
