@@ -1,7 +1,6 @@
 ;(function(window, document) {
     'use strict'
 
-    var clickEvent = (('ontouchstart' in document.documentElement) && _useNative()) ? 'touchstart' : 'click';
     var nanoSelectList = {
         counter: 0
     };
@@ -315,14 +314,14 @@
 
 
     function _onClickCustomSelect(self) {
-        if(!_useNative() || !self.opts.useNative) {
-            if(nanoSelectList.counter === 1) {
-                window.addEventListener(clickEvent, function() {
-                    _closeSelectList(null);
-                });
-            }
+        if(nanoSelectList.counter === 1) {
+            window.addEventListener('click', function() {
+                _closeSelectList(null);
+            });
+        }
 
-            self.customSelect.addEventListener(clickEvent, function(e) {
+        if(!_useNative() || !self.opts.useNative) {
+            self.customSelect.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
 
@@ -338,7 +337,7 @@
 
 
     function _onClickCustomOption(self, option) {
-        option.addEventListener(clickEvent, function(e) {
+        option.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
 
@@ -350,7 +349,7 @@
 
 
     function _onClickCustomGroup(group) {
-        group.addEventListener(clickEvent, function(e) {
+        group.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
         });
@@ -382,7 +381,6 @@
         self.customSelectInputSearch.setAttribute('placeholder', self.opts.searchPlaceholder);
 
         self.customSelectToggle.appendChild(self.customSelectInputSearch);
-
         self.customSelectInputSearch.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
